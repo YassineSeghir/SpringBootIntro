@@ -41,7 +41,7 @@ public class CarController {
 
     @RequestMapping(value = {"/addCar"}, method = RequestMethod.POST)
     public String saveCar(Model model,
-                             @ModelAttribute("carForm") CarForm carForm) {
+                          @ModelAttribute("carForm") CarForm carForm) {
 
         int id = carForm.getId();
         String nom = carForm.getNom();
@@ -52,7 +52,7 @@ public class CarController {
             Car newCar = new Car(id,nom, price);
             cars.add(newCar);
 
-            return "redirect:/carList";
+            return "redirect:/Cars";
         }
 
         model.addAttribute("errorMessage", errorMessage);
