@@ -1,61 +1,63 @@
 package com.car.microdemo.web.controller;
 
-import com.car.microdemo.CarForm;
+import com.car.microdemo.dao.CarDao;
 import com.car.microdemo.model.Car;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import java.net.URI;
+import java.util.List;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import static com.car.microdemo.dao.CarDaoImpl.cars;
-
-
-@Controller
+@EnableSwagger2
+@RestController
 public class CarController {
 
-    @Value("${welcome.message}")
-    private String message;
 
-    @Value("${error.message}")
-    private String errorMessage;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String index(Model model) {
-        model.addAttribute("message", message);
-        return "index";
-    }
+    @Autowired
+    private CarDao CarDao;
 
     @RequestMapping(value = "/Cars", method = RequestMethod.GET)
-    public String carList(Model model) {
-        model.addAttribute("cars", cars);
-        return "carList";
+    public List<Car> carList() {
+        return CarDao.findAll();
     }
 
-    @RequestMapping(value = {"/addCar"}, method = RequestMethod.GET)
-    public String addList(Model model) {
-        CarForm carForm = new CarForm();
-        model.addAttribute("carForm", carForm);
-        return "addCar";
+    @PostMapping(value = "/Cars")
+    public ResponseEntity<Void> saveCar(@RequestBody Car car) {
+        Car saveCar = CarDao.save(car);
+        if (saveCar == null)
+            return ResponseEntity.noContent().build();
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(saveCar.getId())
+                .toUri();
+        return ResponseEntity.created(location).build();
     }
 
-
-    @RequestMapping(value = {"/addCar"}, method = RequestMethod.POST)
-    public String saveCar(Model model,
-                          @ModelAttribute("carForm") CarForm carForm) {
-
-        int id = carForm.getId();
-        String nom = carForm.getNom();
-        int price = carForm.getPrice();
-
-        if (nom != null && nom.length() > 0 //
-                && price != 0) {
-            Car newCar = new Car(id,nom, price);
-            cars.add(newCar);
-
-            return "redirect:/Cars";
-        }
-
-        model.addAttribute("errorMessage", errorMessage);
-        return "addCar";
+    @PutMapping(value = "/Cars")
+    public ResponseEntity<Void> updateCar(@RequestBody Car car) {
+        Car updateCar = CarDao.update(car);
+        if (updateCar == null)
+            return ResponseEntity.noContent().build();
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(updateCar.getId())
+                .toUri();
+        return ResponseEntity.created(location).build();
     }
+
+    @DeleteMapping(value = "/Cars/{id}")
+    public Car deleteCar(@PathVariable int id) {
+        return CarDao.delete(id);
+    }
+
+    @GetMapping(value = "/Cars/{id}")
+    public Car showCar(@PathVariable int id) {
+        return CarDao.findById(id);
+    }
+
 }

@@ -3,7 +3,9 @@ import com.car.microdemo.model.Car;
 import java.util.List;
 
 public interface CarDao {
-    public List<Car> findAll();
-    public Car findById(int id);
-    public Car save(Car car);
+    List<Car> findAll();
+    Car findById(int id);
+    Car save(Car car);
+    Car delete(int id);
+    Car update(Car car);
 }

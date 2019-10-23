@@ -16,6 +16,7 @@ public class CarDaoImpl implements CarDao {
 
     @Override
     public List<Car> findAll(){
+
         return cars;
     }
 
@@ -31,6 +32,19 @@ public class CarDaoImpl implements CarDao {
 
     @Override
     public Car save(Car car){
+        cars.add(car);
+        return car;
+    }
+
+    @Override
+    public Car delete(int id){
+        cars.removeIf(car -> car.getId() == id );
+        return null;
+    }
+
+    @Override
+    public Car update(Car car){
+        delete(car.getId());
         cars.add(car);
         return car;
     }

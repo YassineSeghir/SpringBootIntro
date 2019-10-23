@@ -1,6 +1,5 @@
 package com.car.microdemo.model;
 
-import org.springframework.context.annotation.Bean;
 
 public class Car {
     private int id;
@@ -39,6 +38,13 @@ public class Car {
         this.price = price;
     }
 
-
+    @Override
+    public String toString() {
+        return "Car{" +
+                "id=" + id +
+                ", nom='" + nom + '\'' +
+                ", price=" + price +
+                '}';
+    }
 }
 
